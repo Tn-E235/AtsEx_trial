@@ -152,6 +152,15 @@ namespace AtsExCsTemplate.VehiclePlugin
             return s.ArrivalTime;
         }
 
+        // 現在時刻を取得
+        TimeSpan getCurrentTime () {
+            return BveHacker.Scenario.TimeManager.Time;
+        }
+
+        // 現在時刻を設定
+        void setCurrentTimse (TimeSpan t) {
+            BveHacker.Scenario.TimeManager.SetTime(t);
+        }
 
         // 力行・制動ノッチを設定する
         HandleCommandSet setNotch (int p, int b) {
