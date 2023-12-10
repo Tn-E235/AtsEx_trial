@@ -47,6 +47,9 @@
       <HintPath>..\packages\AtsEx.PluginHost.0.19.0\lib\BveTypes.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="DXDynamicTexture">
+      <HintPath>C:\Users\Public\Documents\AtsEx\1.0\Extensions\DXDynamicTexture.dll</HintPath>
+    </Reference>
     <Reference Include="FastCaching, Version=0.17.30125.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AtsEx.PluginHost.0.19.0\lib\FastCaching.dll</HintPath>
       <Private>False</Private>
@@ -65,6 +68,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,6 +86,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PanelTest.cs" />
     <Compile Include="VehiclePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
