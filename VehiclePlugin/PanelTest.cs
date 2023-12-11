@@ -20,28 +20,22 @@ namespace AtsExCsTemplate.VehiclePlugin {
         private GDIHelper GDIHelper;
         private static TextureHandle txH;
         private static Bitmap bmp;
-        //private GDIHelper gdi_bmp;
-
 
         private static string dllParentPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
         public DXDynamicTextureTest (PluginBuilder builder) : base(builder) {
             BveHacker.ScenarioCreated += OnScenarioCreated;
+            txH = TextureManager.Register("img.png", 512, 512);
+            GDIHelper = new GDIHelper(txH.Width, txH.Height);
+            bmp = new Bitmap(Path.Combine(dllParentPath, "tex/img2.png"));
         }
 
         public override void Dispose () {
             BveHacker.ScenarioCreated -= OnScenarioCreated;
         }
 
+
         private void OnScenarioCreated (ScenarioCreatedEventArgs e) {
-            //Model targetModel = e.Scenario.Route.StructureModels["dxdt-test"];
-            //TextureHandle = targetModel.Register("img.png");
-
-            txH = TextureManager.Register("img.png", 512, 512);
-            GDIHelper = new GDIHelper(txH.Width, txH.Height);
-
-            bmp = new Bitmap(Path.Combine(dllParentPath, "tex/img2.png"));
-            //gdi_bmp = new GDIHelper(bmp.Width, bmp.Height);
         }
 
         public override TickResult Tick (TimeSpan elapsed) {
@@ -64,7 +58,7 @@ namespace AtsExCsTemplate.VehiclePlugin {
                     GDIHelper.Graphics.DrawString(
                         (((Station)stations[i]).Name).ToString(),
                         drawFont,
-                        Brushes.Green, 0, (i+1) * 16
+                        Brushes.Green, 0, (i+1) * 20
                     );
                 }
 
