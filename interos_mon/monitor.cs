@@ -45,7 +45,7 @@ namespace AtsExCsTemplate.VehiclePlugin {
         }
 
         public override TickResult Tick (TimeSpan elapsed) {
-
+            
             if (txH.IsCreated && txH.HasEnoughTimePassed(10) && update) {
                 Font drawFont = new Font(DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE);
                 StationList stations = BveHacker.Scenario.Route.Stations;
@@ -69,6 +69,10 @@ namespace AtsExCsTemplate.VehiclePlugin {
                 gdi.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, 255, 255)), new Rectangle(650, 360, 395, 3));
                 // 車両状態帯
                 gdi.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, 0, 0)), new Rectangle(0, 500, 1280, 100));
+                // ドア(車両数の取得方法が分からん)
+                for (int i = 0; i < 4; ++i) {
+                    draw_door(i);
+                }
                 // 下部ボタン帯
                 gdi.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(0, 0, 0)), new Rectangle(0, 685, 1280, 115));
                 gdi.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(71, 80, 101)), new Rectangle(630, 700, 495, 25));
@@ -123,6 +127,18 @@ namespace AtsExCsTemplate.VehiclePlugin {
             Font drawFont_S = new Font(DEFAULT_FONT_FAMILY, 10);
             gdi.Graphics.DrawString(String.Format("{0:00}", i_time.Minutes), drawFont_M, Brushes.White, 1025 - i_idx * 100, 375);
             gdi.Graphics.DrawString(String.Format("{0:00}", i_time.Seconds), drawFont_S, Brushes.White, 1050 - i_idx * 100, 376);
+        }
+
+        public void draw_door(int i_car) {
+            // 左右どちらかのドアがあいているとき、開表示とする
+            if (BveHacker.Scenario.Vehicle.Doors.GetSide(DoorSide.Left).CarDoors[i_car].State == DoorState.Close 
+                && BveHacker.Scenario.Vehicle.Doors.GetSide(DoorSide.Right).CarDoors[i_car].State == DoorState.Close) {
+                gdi.Graphics.FillRectangle(new SolidBrush(Color.Red), new Rectangle(365 + (i_car - 1) * 70, 510, 68, 30));
+            } else {
+                gdi.Graphics.FillRectangle(new SolidBrush(Color.White), new Rectangle(365 + (i_car - 1) * 70, 510, 68, 30));
+            }
+            gdi.Graphics.DrawRectangle(Pens.Blue, new Rectangle(365 + (i_car - 1) * 70, 510, 68, 30));
+            // 号車表示
         }
 
         public String cvt_station_name (String i_name) {
