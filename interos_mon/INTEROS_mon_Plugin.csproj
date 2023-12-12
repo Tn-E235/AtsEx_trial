@@ -86,9 +86,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DrawButton.cs" />
     <Compile Include="monitor.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Struct.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
