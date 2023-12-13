@@ -36,17 +36,17 @@ unsafe public class DrawGenzaiJikoku {
     }
 
     public void Draw (GDIHelper i_gdi, TimeSpan i_time) {
-        if (i_time.Hours == this.time.Hours) {
+        if (i_time.Hours != this.time.Hours) {
             i_gdi.Graphics.FillRectangle(new SolidBrush(this.bg), new Rectangle(this.x, this.y, 50, 30));
             i_gdi.Graphics.DrawString(String.Format("{0, 2}時", i_time.Hours),
                 this.font, new SolidBrush(this.color), new Point(this.x, this.y));
         }
-        if (i_time.Minutes == this.time.Minutes) {
+        if (i_time.Minutes != this.time.Minutes) {
             i_gdi.Graphics.FillRectangle(new SolidBrush(this.bg), new Rectangle(this.x+70, this.y, 50, 30));
             i_gdi.Graphics.DrawString(String.Format("{0, 2}分", i_time.Minutes),
                 this.font, new SolidBrush(this.color), new Point(this.x+70, this.y));
         }
-        if (i_time.Seconds == this.time.Seconds) {
+        if (i_time.Seconds != this.time.Seconds) {
             i_gdi.Graphics.FillRectangle(new SolidBrush(this.bg), new Rectangle(this.x+140, this.y, 50, 30));
             i_gdi.Graphics.DrawString(String.Format("{0, 2}秒", i_time.Seconds),
                 this.font, new SolidBrush(this.color), new Point(this.x+140, this.y));
@@ -58,17 +58,17 @@ unsafe public class DrawGenzaiJikoku {
     public Bitmap getGenzaiJikoku (TimeSpan i_time) {
 		Graphics g = Graphics.FromImage(bmp);
 
-        if (i_time.Hours == this.time.Hours) {
+        if (i_time.Hours != this.time.Hours) {
 			g.FillRectangle(new SolidBrush(this.bg), new Rectangle(0, 0, 70, 30));
 			g.DrawString(String.Format("{0, 2}時", i_time.Hours), 
 				this.font, new SolidBrush(this.color), new Point(0, 0));
         }
-		if (i_time.Minutes == this.time.Minutes) {
+		if (i_time.Minutes != this.time.Minutes) {
             g.FillRectangle(new SolidBrush(this.bg), new Rectangle(70, 0, 70, 30));
             g.DrawString(String.Format("{0, 2}分", i_time.Minutes),
                 this.font, new SolidBrush(this.color), new Point(70, 0));
         }
-		if(i_time.Seconds == this.time.Seconds) {
+		if(i_time.Seconds != this.time.Seconds) {
             g.FillRectangle(new SolidBrush(this.bg), new Rectangle(140, 0, 70, 30));
             g.DrawString(String.Format("{0, 2}秒", i_time.Seconds),
                 this.font, new SolidBrush(this.color), new Point(140, 0));
