@@ -108,7 +108,6 @@ public class DrawButton {
         corner2.AddPolygon(polyPoints_c2);
         corner3.AddPolygon(polyPoints_c3);
         corner4.AddPolygon(polyPoints_c4);
-        Color c;
 
         tmp_g.FillPath(new SolidBrush(btn_color_on.koumen),  sankaku1);
         tmp_g.FillPath(new SolidBrush(btn_color_on.kagemen), sankaku2);
