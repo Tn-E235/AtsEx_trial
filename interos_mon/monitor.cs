@@ -30,6 +30,7 @@ namespace AtsExCsTemplate.VehiclePlugin {
 
         BACKGROUND_COLOR bg_color;
         DrawGenzaiJikoku genzaoi_jikoku;
+        MakeShinroImage shinro;
 
         private static string dllParentPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
@@ -42,7 +43,7 @@ namespace AtsExCsTemplate.VehiclePlugin {
 
             bg_color = new BACKGROUND_COLOR(0);
             genzaoi_jikoku = new DrawGenzaiJikoku(395, 2, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
-
+            shinro = new MakeShinroImage();
         }
 
         public override void Dispose () {
@@ -98,6 +99,12 @@ namespace AtsExCsTemplate.VehiclePlugin {
 
             // 終着駅表示
             draw_syucyaku_eki();
+
+            // 開通距離表示(停車駅までの距離(仮実装))
+            if (0 <= stations.CurrentIndex + door + 1 && stations.CurrentIndex + door + 1 < stations.Count) {
+                double d = ((Station)stations[stations.CurrentIndex + door + 1]).Location - Native.VehicleState.Location;
+                gdi.Graphics.DrawImage(shinro.GetShinroImage((int)d), 0, 205);
+            }
 
             txH.Update(gdi);
             //update = false;
