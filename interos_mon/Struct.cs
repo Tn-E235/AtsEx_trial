@@ -8,36 +8,45 @@ namespace PITempCS.mon {
     using System.Windows.Forms;
 
     /* ---- 一般フォント ------------------------------------------------------- */
-    struct GENERAL_FONT {
+    struct FONT_INF {
         public String text_jp;
         public String text_en;
         public String num_han;
         public String num_zen;
-        public GENERAL_FONT (int i) {
-            text_jp = "Cica";
-            text_en = "Cica";
-            num_han = "Cica";
-            num_zen = "Cica";
+        public int size;
+        public Color color;
+        public FONT_INF (int i) {
+            this.text_jp = "VL ゴシック";
+            this.text_en = "VL ゴシック";
+            this.num_han = "VL ゴシック";
+            this.num_zen = "VL ゴシック";
+            this.size    = 22;
+            this.color   = Color.White;
         }
-        public GENERAL_FONT (String font) {
-            text_jp = font;
-            text_en = font;
-            num_han = font;
-            num_zen = font;
+        public FONT_INF (String font) {
+            this.text_jp = font;
+            this.text_en = font;
+            this.num_han = font;
+            this.num_zen = font;
+            this.size    = 16;
+            this.color   = Color.White;
         }
-        public GENERAL_FONT (String font1, String font2) {
-            text_jp = font1;
-            text_en = font1;
-            num_han = font2;
-            num_zen = font2;
+        public FONT_INF (String font1, String font2, int size) {
+            this.text_jp = font1;
+            this.text_en = font1;
+            this.num_han = font2;
+            this.num_zen = font2;
+            this.size    = size;
+            this.color   = Color.White;
         }
-        public GENERAL_FONT (String font1, String font2, String font3, String font4) {
-            text_jp = font1;
-            text_en = font2;
-            num_han = font3;
-            num_zen = font4;
+        public FONT_INF (String font1, String font2, String font3, String font4, int size, Color color) {
+            this.text_jp = font1;
+            this.text_en = font2;
+            this.num_han = font3;
+            this.num_zen = font4;
+            this.size    = size;
+            this.color   = color;
         }
-
     }
 
     /* ---- 一般フォントカラー ------------------------------------------------- */
@@ -47,21 +56,21 @@ namespace PITempCS.mon {
 
     /* ---- 画面背景色 --------------------------------------------------------- */
     struct BACKGROUND_COLOR {
-        public Brush bg1;
-        public Brush bg2;
-        public Brush bg3;
-        public Brush bg4;
+        public Color bg1;
+        public Color bg2;
+        public Color bg3;
+        public Color bg4;
         public BACKGROUND_COLOR (int i) {
-            bg1 = new SolidBrush(Color.FromArgb(71, 80, 101));
-            bg2 = new SolidBrush(Color.FromArgb(0, 0, 0));
-            bg3 = new SolidBrush(Color.FromArgb(53, 62, 83));
-            bg4 = new SolidBrush(Color.FromArgb(37, 41, 51));
+            bg1 = Color.FromArgb(71, 80, 101);
+            bg2 = Color.FromArgb(0, 0, 0);
+            bg3 = Color.FromArgb(53, 62, 83);
+            bg4 = Color.FromArgb(37, 41, 51);
         }
-        public BACKGROUND_COLOR (Brush b1, Brush b2, Brush b3, Brush b4) {
-            bg1 = b1;
-            bg2 = b2;
-            bg3 = b3;
-            bg4 = b4;
+        public BACKGROUND_COLOR (Color c1, Color c2, Color c3, Color c4) {
+            bg1 = c1;
+            bg2 = c2;
+            bg3 = c3;
+            bg4 = c4;
         }
     }
 
@@ -74,28 +83,64 @@ namespace PITempCS.mon {
         public Color kado2;                         // コーナー(影面)
         public Color kado3;                         // コーナー(影面)
         public Color font_color;                    // フォントカラー
+        //public int font_size;                       // フォントサイズ
+        //public Font font;                           // フォント
 
         public BUTTON_COLOR (int i) {
-            body       = Color.FromArgb( 48,  77, 135);
-            koumen     = Color.FromArgb(168, 184, 215);
-            kagemen    = Color.FromArgb( 28,  35,  58);
-            kado1      = Color.FromArgb(244, 244, 244);
-            kado2      = Color.FromArgb(119, 139, 183);
-            kado3      = Color.FromArgb(244, 244, 244);
-            font_color = Color.FromArgb(255, 255, 255);
+            this.body       = Color.FromArgb( 48,  77, 135);
+            this.koumen     = Color.FromArgb(168, 184, 215);
+            this.kagemen    = Color.FromArgb( 28,  35,  58);
+            this.kado1      = Color.FromArgb(244, 244, 244);
+            this.kado2      = Color.FromArgb(119, 139, 183);
+            this.kado3      = Color.FromArgb(244, 244, 244);
+            this.font_color = Color.FromArgb(255, 255, 255);
+            //this.font_size  = 16;
+            //this.font       = new Font("cica", font_size);
         }
 
         public BUTTON_COLOR (Color c1, Color c2, Color c3, Color c4, Color c5, Color c6, Color c7) {
-            body = c1;
-            koumen = c2;
-            kagemen = c3;
-            kado1 = c4;
-            kado2 = c5;
-            kado3 = c6;
-            font_color = c7;
+            this.body       = c1;
+            this.koumen     = c2;
+            this.kagemen    = c3;
+            this.kado1      = c4;
+            this.kado2      = c5;
+            this.kado3      = c6;
+            this.font_color = c7;
+            //this.font_size  = i;
+            //this.font       = new Font(s, font_size);
         }
 
     }
+
+
+
+    struct DRAW_INF_SET {
+        public int x;
+        public int y;
+        public int size;
+        public Color color;
+        public Font font;
+        public Color bg;
+        public DRAW_INF_SET (int i) {
+            this.x     = 0;
+            this.y     = 0;
+            this.size  = 16;
+            this.color = Color.White;
+            this.font  = new Font("VL ゴシック", this.size);
+            this.bg    = Color.Black;
+        }
+
+        public DRAW_INF_SET (int x, int y, int size, Color color, String font, Color bg) {
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.color = color;
+            this.font = new Font(font, this.size);
+            this.bg = bg;
+        }
+    }
+
+
     /* ---- 通過設定描画色 ----------------------------------------------------- */
     struct TSUKA_SETTEI {
         public Brush bg_color;
@@ -137,6 +182,21 @@ namespace PITempCS.mon {
     }
 
 
-
+    struct STOP_EKI_INF {
+        public int idx;
+        public string name;
+        public TimeSpan cyaku_jikoku;
+        public TimeSpan hatsu_jikoku;
+        public int cyakuhatsu_bansen;
+        public int hatsu_bansen;
+        public STOP_EKI_INF(int i) {
+            idx = 0;
+            name = "未設定";
+            cyaku_jikoku = new TimeSpan(0);
+            hatsu_jikoku = new TimeSpan(0);
+            cyakuhatsu_bansen = 0;
+            hatsu_bansen = 0;
+        }
+    }
 
 }

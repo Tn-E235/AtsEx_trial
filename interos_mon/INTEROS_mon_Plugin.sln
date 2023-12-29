@@ -5,6 +5,11 @@ VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "INTEROS_mon_Plugin", "INTEROS_mon_Plugin.csproj", "{B4C723A7-FD6A-4931-B3BF-A6635F44899B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{3126679D-ED54-4D0A-BEC1-CA694AC901BC}"
+	ProjectSection(SolutionItems) = preProject
+		DrawShinro.cs = DrawShinro.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
