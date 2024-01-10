@@ -24,7 +24,7 @@ public class DrawButton {
 	}
 
     /* ---- ボタン画像取得 ------------------------------------------------- */
-    public Bitmap getButtonImage (int w, int h, int r) {
+    public Bitmap MakeButtonImage (int w, int h, int r) {
         // ボタン画像生成
         Bitmap tmp_img = new Bitmap(w, h);
         Graphics tmp_g = Graphics.FromImage(tmp_img);

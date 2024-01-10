@@ -29,7 +29,7 @@ namespace AtsExCsTemplate.VehiclePlugin {
         private bool base_draw_f = true;
 
         BACKGROUND_COLOR bg_color;
-        DrawGenzaiJikoku genzaoi_jikoku;
+        MakeGenzaiJikokuImage genzai_jikoku;
         MakeShinroImage shinro;
 
         private static string dllParentPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -42,13 +42,15 @@ namespace AtsExCsTemplate.VehiclePlugin {
             mon_R = new Bitmap(Path.Combine(dllParentPath, "./tex/base.png"));
 
             bg_color = new BACKGROUND_COLOR(0);
-            genzaoi_jikoku = new DrawGenzaiJikoku(395, 2, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
+            genzai_jikoku = new MakeGenzaiJikokuImage(395, 2, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
             shinro = new MakeShinroImage();
         }
 
         public override void Dispose () {
             BveHacker.ScenarioCreated -= OnScenarioCreated;
             mon_R.Dispose();
+            genzai_jikoku.Dispose();
+            shinro.Dispose();
         }
 
 
@@ -90,9 +92,10 @@ namespace AtsExCsTemplate.VehiclePlugin {
             }
 
             // 現在時刻
-            //gdi.Graphics.DrawImage(genzaoi_jikoku.getGenzaiJikoku(Native.VehicleState.Time), 395, 2);
-            //gdi = genzaoi_jikoku.Draw(gdi, Native.VehicleState.Time);
-            genzaoi_jikoku.Draw(gdi, Native.VehicleState.Time);
+            genzai_jikoku.make(Native.VehicleState.Time);
+            gdi.Graphics.DrawImage(genzai_jikoku.get(), 395, 2);
+            //gdi = genzai_jikoku.Draw(gdi, Native.VehicleState.Time);
+            //genzai_jikoku.Draw(gdi, Native.VehicleState.Time);
 
             // 採時駅表示(着時刻および発時刻がある駅とする)
             draw_saiji_eki();
@@ -103,7 +106,10 @@ namespace AtsExCsTemplate.VehiclePlugin {
             // 開通距離表示(停車駅までの距離(仮実装))
             if (0 <= stations.CurrentIndex + door + 1 && stations.CurrentIndex + door + 1 < stations.Count) {
                 double d = ((Station)stations[stations.CurrentIndex + door + 1]).Location - Native.VehicleState.Location;
-                gdi.Graphics.DrawImage(shinro.GetShinroImage((int)d), 0, 205);
+                this.shinro.make((int)d);
+                if (this.shinro.isUpdate()) { 
+                    gdi.Graphics.DrawImage(shinro.get(), 0, 205);
+                }
             }
 
             txH.Update(gdi);
@@ -148,13 +154,13 @@ namespace AtsExCsTemplate.VehiclePlugin {
 
             // 下部button
             DrawButton buttunImg = new DrawButton();
-            gdi.Graphics.DrawImage(buttunImg.getButtonImage(155, 65, 5), 955, 615);
-            gdi.Graphics.DrawImage(buttunImg.getButtonImage(155, 65, 5), 1115, 615);
+            gdi.Graphics.DrawImage(buttunImg.MakeButtonImage(155, 65, 5), 955, 615);
+            gdi.Graphics.DrawImage(buttunImg.MakeButtonImage(155, 65, 5), 1115, 615);
 
-            gdi.Graphics.DrawImage(buttunImg.getButtonImage(150, 105, 5), 10, 690);
-            gdi.Graphics.DrawImage(buttunImg.getButtonImage(150, 105, 5), 165, 690);
-            gdi.Graphics.DrawImage(buttunImg.getButtonImage(150, 105, 5), 320, 690);
-            gdi.Graphics.DrawImage(buttunImg.getButtonImage(150, 105, 5), 475, 690);
+            gdi.Graphics.DrawImage(buttunImg.MakeButtonImage(150, 105, 5), 10, 690);
+            gdi.Graphics.DrawImage(buttunImg.MakeButtonImage(150, 105, 5), 165, 690);
+            gdi.Graphics.DrawImage(buttunImg.MakeButtonImage(150, 105, 5), 320, 690);
+            gdi.Graphics.DrawImage(buttunImg.MakeButtonImage(150, 105, 5), 475, 690);
         }
 
         public void draw_station_name (int i_idx, String i_name) {

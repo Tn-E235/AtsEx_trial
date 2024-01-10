@@ -59,8 +59,11 @@ public class MakeShinroImage {
 	ShinroColor color;
 	ShinroInfo s_inf;
 	DrawInfo d_inf;
-
+	Boolean update;
 	const int SHINRO_MAX = 1000;    // 開通進路表示距離
+	Point[] sankaku_p;				// 開通境界赤三角
+	
+
 	public MakeShinroImage () {
 		this.color = new ShinroColor(0);
 		this.s_inf = new ShinroInfo(0);
@@ -69,6 +72,7 @@ public class MakeShinroImage {
 		this.g = Graphics.FromImage(this.shinaro);
 		this.distance = 0;
 		this.init();
+		this.sankaku_p = new Point[] { new Point(0, 0), new Point(0, 0), new Point(0, 0) };
 	}
 
 	void init() {
@@ -80,23 +84,47 @@ public class MakeShinroImage {
         g.DrawString("500 ", this.d_inf.font, new SolidBrush(this.color.text), new Point(0, this.d_inf.track_height / 2 - this.d_inf.font_size / 2));
         // 距離程表示[   0]
         g.DrawString("0   ", this.d_inf.font, new SolidBrush(this.color.text), new Point(0, this.d_inf.track_height - this.d_inf.font_size));
-        // 自車マーク表示
+		// 自車マーク表示
 
-
+		// 更新フラグ
+		this.update = true;
     }
+	
+	public Bitmap get() {
+		return this.shinaro;
+	}
 
-    public Bitmap GetShinroImage(int distatnce) {
+	public Boolean isUpdate() {
+		return this.update;
+	}
+
+	public void Dispose() {
+		this.g.Dispose();
+	}
+
+    public void make(int distatnce) {
 
 		// 開通進路距離(描画換算)
 		int d = distatnce >= SHINRO_MAX ? this.d_inf.track_height : distatnce * this.d_inf.track_height / SHINRO_MAX;
 		// 描画更新判定
-		if (d != this.distance) {
-			// 軌道回路(ベース)
-			g.FillRectangle(new SolidBrush(this.color.kido), new Rectangle(75, 0, this.d_inf.track_width, this.d_inf.track_height - d));
-			// 開通進路描画
-			g.FillRectangle(new SolidBrush(this.color.kaitsu), new Rectangle(75, this.d_inf.track_height - d, this.d_inf.track_width, d));
-        }
+		if (d == this.distance) {
+			this.update = false;
+			return;
+		}
+		
+		// 軌道回路(ベース)
+		g.FillRectangle(new SolidBrush(this.color.kido), new Rectangle(75, 0, this.d_inf.track_width, this.d_inf.track_height - d));
+		
+		// 開通境界赤三角表示
+		if (900 < distance) {
+			// 
+			
+		} else {
 
+		}
+		// 開通進路描画
+		g.FillRectangle(new SolidBrush(this.color.kaitsu), new Rectangle(75, this.d_inf.track_height - d, this.d_inf.track_width, d));
+        
 		// 残距離表示
 		g.FillRectangle(new SolidBrush(this.color.bg), new Rectangle(0, 205, this.d_inf.width, 20));
 		g.DrawString(String.Format("停止限界{0, 4}m", distatnce), this.d_inf.font, new SolidBrush(this.color.text), new Point(0, 205));
@@ -104,7 +132,8 @@ public class MakeShinroImage {
         // 表示開通距離更新
         this.distance = d;
 		this.s_inf.distance = distance;
+		this.update = true;
 
-        return this.shinaro;
+        return;
 	}
 }
