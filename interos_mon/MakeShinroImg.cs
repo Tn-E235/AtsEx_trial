@@ -121,6 +121,7 @@ public class MakeShinroImage {
 
 		// 開通進路距離(描画換算)
 		int d = distatnce >= SHINRO_MAX ? this.d_inf.track_height : distatnce * this.d_inf.track_height / SHINRO_MAX;
+		if (d < 0) d = 0;
 
 		// 描画更新判定(描画距離)
 		if (d != this.distance) {
