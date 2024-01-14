@@ -3,15 +3,17 @@ using System;
 using System.Drawing;
 using Zbx1425.DXDynamicTexture;
 
-unsafe public class MakeGenzaiJikokuImage {
+unsafe public class MakeGenzaiJikokuImg {
 	private TimeSpan time;
     DWST_RECT_TEXT draw_inf;
 
     Bitmap bmp;
     Graphics g;
 
-	public MakeGenzaiJikokuImage (int x, int y, int size, Color color, String font, Color bg) {
+	public MakeGenzaiJikokuImg (int x, int y, int size, Color color, String font, Color bg) {
         this.draw_inf = new DWST_RECT_TEXT(x, y, size, color, font, bg);
+        this.bmp = new Bitmap(210, 30);
+        this.g = Graphics.FromImage(this.bmp);
     }
 
     public void Dispose() {
