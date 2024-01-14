@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Drawing;
 
-struct ShinroColor {
+struct DWST_SHINRO_COLOR {
 	public Color bg;		// 背景色
 	public Color kido;		// 進路ベース
 	public Color kaitsu;	// 開通進路
 	public Color text;		// 文字色
 	public Color jisya;		// 自車マーク
 	public Color yajirushi;	// 矢印マーク
-	public ShinroColor (int i) {
+	public DWST_SHINRO_COLOR (int i) {
 		this.bg = Color.Black;
 		this.kido = Color.White;
 		this.kaitsu = Color.Cyan;
@@ -18,7 +18,7 @@ struct ShinroColor {
 	}
 }
 
-struct DrawInfo {
+struct DWST_SHINRO_INF {
 	public int width;		// 表示エリアの幅
 	public int height;		// 表示エリアの高さ
 	public int track_width;	// 軌道回路の幅
@@ -28,7 +28,7 @@ struct DrawInfo {
 	public String font_name;// フォント名
 	public Font font;		// フォント
 
-	public DrawInfo (int i) {
+	public DWST_SHINRO_INF (int i) {
 		this.width = 200;
 		this.height = 225;
 		this.track_width = 20;
@@ -40,11 +40,11 @@ struct DrawInfo {
 	}
 }
 
-struct ShinroInfo {
+struct SHINRO_INF {
 	public String name;		// 軌道回路名称
 	public int blockID;     // ブロックID
 	public int distance;	// 進路開通距離
-	public ShinroInfo(int i) {
+	public SHINRO_INF(int i) {
 		this.name     = "";
 		this.blockID  = 0;
 		this.distance = 0;
@@ -56,18 +56,18 @@ public class MakeShinroImage {
 	Bitmap shinaro;
 	Graphics g;
     int distance;
-	ShinroColor color;
-	ShinroInfo s_inf;
-	DrawInfo d_inf;
+	DWST_SHINRO_COLOR color;
+	SHINRO_INF s_inf;
+	DWST_SHINRO_INF d_inf;
 	Boolean update;
 	const int SHINRO_MAX = 1000;    // 開通進路表示距離
 	Point[] sankaku_p;				// 開通境界赤三角
 	
 
 	public MakeShinroImage () {
-		this.color = new ShinroColor(0);
-		this.s_inf = new ShinroInfo(0);
-		this.d_inf = new DrawInfo(0);
+		this.color = new DWST_SHINRO_COLOR(0);
+		this.s_inf = new SHINRO_INF(0);
+		this.d_inf = new DWST_SHINRO_INF(0);
 		this.shinaro = new Bitmap(this.d_inf.width, this.d_inf.height);
 		this.g = Graphics.FromImage(this.shinaro);
 		this.distance = 0;

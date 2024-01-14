@@ -114,14 +114,14 @@ namespace PITempCS.mon {
 
 
 
-    struct DRAW_INF_SET {
+    struct DWST_RECT_TEXT {
         public int x;
         public int y;
         public int size;
         public Color color;
         public Font font;
         public Color bg;
-        public DRAW_INF_SET (int i) {
+        public DWST_RECT_TEXT (int i) {
             this.x     = 0;
             this.y     = 0;
             this.size  = 16;
@@ -130,7 +130,7 @@ namespace PITempCS.mon {
             this.bg    = Color.Black;
         }
 
-        public DRAW_INF_SET (int x, int y, int size, Color color, String font, Color bg) {
+        public DWST_RECT_TEXT (int x, int y, int size, Color color, String font, Color bg) {
             this.x = x;
             this.y = y;
             this.size = size;
