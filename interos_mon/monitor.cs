@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Zbx1425.DXDynamicTexture;
-
 using AtsEx.PluginHost.Plugins;
 using AtsEx.PluginHost;
+using AtsEx;
 using BveTypes.ClassWrappers;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
-using System.Drawing.Drawing2D;
 using PITempCS.mon;
-using SlimDX;
+using AtsEx.Extensions.PreTrainPatch;
 
 namespace AtsExCsTemplate.VehiclePlugin {
     [PluginType(PluginType.VehiclePlugin)]
@@ -29,8 +23,11 @@ namespace AtsExCsTemplate.VehiclePlugin {
         private bool base_draw_f = true;
 
         BACKGROUND_COLOR bg_color;
-        MakeGenzaiJikokuImage genzai_jikoku;
+        MakeGenzaiJikokuImg genzai_jikoku;
+        MakeKiroteiImg kirotei;
         MakeShinroImage shinro;
+        MakeSpeedImg make_speed;
+        DrawStopStations stop_stations;
 
         private static string dllParentPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
@@ -42,8 +39,11 @@ namespace AtsExCsTemplate.VehiclePlugin {
             mon_R = new Bitmap(Path.Combine(dllParentPath, "./tex/base.png"));
 
             bg_color = new BACKGROUND_COLOR(0);
-            genzai_jikoku = new MakeGenzaiJikokuImage(395, 2, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
+            genzai_jikoku = new MakeGenzaiJikokuImg(395, 2, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
+            kirotei = new MakeKiroteiImg(395, 2, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
             shinro = new MakeShinroImage();
+            make_speed = new MakeSpeedImg(0, 16, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
+            stop_stations = new DrawStopStations();
         }
 
         public override void Dispose () {
@@ -51,6 +51,8 @@ namespace AtsExCsTemplate.VehiclePlugin {
             mon_R.Dispose();
             genzai_jikoku.Dispose();
             shinro.Dispose();
+            make_speed.Dispose();
+            stop_stations.dispose();
         }
 
 
@@ -61,6 +63,7 @@ namespace AtsExCsTemplate.VehiclePlugin {
             if (!txH.IsCreated || !txH.HasEnoughTimePassed(100)) {
                 return new VehiclePluginTickResult();
             }
+
 
             if (this.base_draw_f) {
                 draw_base();
@@ -73,30 +76,25 @@ namespace AtsExCsTemplate.VehiclePlugin {
                 draw_car_unit(i);
             }
 
-            int cnt = 0;
             // 停車駅一覧[1]-[5]を表示
             StationList stations = BveHacker.Scenario.Route.Stations;
             // ドア状態
             int door = isAllDoorClosed() ? 0 : 1;
-            for (int i = stations.CurrentIndex + door; i < stations.Count; ++i) {
-                // 駅が無いとき
-                if (i < 0) break;
-                // 駅名を表示
-                draw_station_name(cnt, ((Station)stations[i]).Name);
-                // 到着時刻を表示
-                draw_arrive_time(cnt, ((Station)stations[i]).ArrivalTime);
-                // 出発時刻を表示
-                draw_deperture_time(cnt, ((Station)stations[i]).DepertureTime);
-                ++cnt;
-                if (cnt == 5) break;
-            }
+            // 停車駅表示
+            stop_stations.draw(gdi, stations, stations.CurrentIndex + door);
 
             // 現在時刻
             genzai_jikoku.make(Native.VehicleState.Time);
-            gdi.Graphics.DrawImage(genzai_jikoku.get(), 395, 2);
-            //gdi = genzai_jikoku.Draw(gdi, Native.VehicleState.Time);
-            //genzai_jikoku.Draw(gdi, Native.VehicleState.Time);
+            if (genzai_jikoku.isUpdate()) gdi.Graphics.DrawImage(genzai_jikoku.get(), 350, 2);
 
+            // 現在速度
+            make_speed.make((int)Native.VehicleState.Speed);
+            if (make_speed.isUpdate()) gdi.Graphics.DrawImage(make_speed.get(), 425, 35);
+
+            // キロ程
+            kirotei.make(Native.VehicleState.Location);
+            if (kirotei.isUpdate()) gdi.Graphics.DrawImage(kirotei.get(), 397, 68);
+           
             // 採時駅表示(着時刻および発時刻がある駅とする)
             draw_saiji_eki();
 
@@ -106,7 +104,8 @@ namespace AtsExCsTemplate.VehiclePlugin {
             // 開通距離表示(停車駅までの距離(仮実装))
             if (0 <= stations.CurrentIndex + door + 1 && stations.CurrentIndex + door + 1 < stations.Count) {
                 double d = ((Station)stations[stations.CurrentIndex + door + 1]).Location - Native.VehicleState.Location;
-                this.shinro.make((int)d);
+                
+                this.shinro.make(d);
                 if (this.shinro.isUpdate()) { 
                     gdi.Graphics.DrawImage(shinro.get(), 0, 205);
                 }
