@@ -43,11 +43,11 @@ struct DWST_SHINRO_INF {
 struct SHINRO_INF {
 	public String name;		// 軌道回路名称
 	public int blockID;     // ブロックID
-	public int distance;	// 進路開通距離
+	public double distance;	// 進路開通距離
 	public SHINRO_INF(int i) {
 		this.name     = "";
 		this.blockID  = 0;
-		this.distance = 0;
+		this.distance = 0.0;
 	}
 }
 
@@ -111,7 +111,7 @@ public class MakeShinroImage {
 		this.g.Dispose();
 	}
 
-    public void make(int distatnce) {
+    public void make(double distatnce) {
 
 		// 描画更新判定(残距離)
 		if (distatnce == this.s_inf.distance) {
@@ -120,7 +120,7 @@ public class MakeShinroImage {
 		}
 
 		// 開通進路距離(描画換算)
-		int d = distatnce >= SHINRO_MAX ? this.d_inf.track_height : distatnce * this.d_inf.track_height / SHINRO_MAX;
+		int d = (int)(distatnce >= SHINRO_MAX ? this.d_inf.track_height : distatnce * this.d_inf.track_height / SHINRO_MAX);
 		if (d < 0) d = 0;
 
 		// 描画更新判定(描画距離)
@@ -144,7 +144,7 @@ public class MakeShinroImage {
 
 		// 残距離表示
 		g.FillRectangle(new SolidBrush(this.color.bg), new Rectangle(0, 205, this.d_inf.width, 20));
-		g.DrawString(String.Format("停止限界{0, 4}m", distatnce), this.d_inf.font, new SolidBrush(this.color.text), new Point(0, 205));
+		g.DrawString(String.Format("停止限界{0,7:0.0}m", distatnce), this.d_inf.font, new SolidBrush(this.color.text), new Point(0, 205));
 
         // 表示開通距離更新
         this.distance = d;
