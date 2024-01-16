@@ -1,4 +1,5 @@
-﻿using PITempCS.mon;
+﻿using Mono.Cecil;
+using PITempCS.mon;
 using System;
 using System.Drawing;
 using Zbx1425.DXDynamicTexture;
@@ -9,11 +10,13 @@ unsafe public class MakeGenzaiJikokuImg {
 
     Bitmap bmp;
     Graphics g;
+    bool update;
 
 	public MakeGenzaiJikokuImg (int x, int y, int size, Color color, String font, Color bg) {
         this.draw_inf = new DWST_RECT_TEXT(x, y, size, color, font, bg);
         this.bmp = new Bitmap(210, 30);
         this.g = Graphics.FromImage(this.bmp);
+        this.update = true;
     }
 
     public void Dispose() {
@@ -45,6 +48,11 @@ unsafe public class MakeGenzaiJikokuImg {
     }
     public void make (TimeSpan i_time) {
 		
+        if (i_time.TotalMilliseconds == this.time.TotalSeconds) {
+            this.update = false;
+            return;
+        }
+
         if (i_time.Hours != this.time.Hours) {
 			this.g.FillRectangle(new SolidBrush(this.draw_inf.bg), new Rectangle(0, 0, 70, 30));
 			this.g.DrawString(String.Format("{0, 2}時", i_time.Hours), 
@@ -62,5 +70,10 @@ unsafe public class MakeGenzaiJikokuImg {
         }
 
 		this.time = i_time; 
+        this.update = true;
+    }
+
+    public bool isUpdate() {
+        return this.update;
     }
 }
