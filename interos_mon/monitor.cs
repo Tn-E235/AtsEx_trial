@@ -9,12 +9,14 @@ using System.Drawing;
 using System.IO;
 using PITempCS.mon;
 using AtsEx.Extensions.PreTrainPatch;
+using System.Collections.Generic;
+using Mono.Collections.Generic;
 
 namespace AtsExCsTemplate.VehiclePlugin {
     [PluginType(PluginType.VehiclePlugin)]
     public class DXDynamicTextureTest : AssemblyPluginBase {
         private GDIHelper gdi;
-        private Bitmap mon_R;
+        //private Bitmap mon_R;
         private static TextureHandle txH;
 
         private const String DEFAULT_FONT_FAMILY = "VL ゴシック";// Cica", ""HGSｺﾞｼｯｸE"; //"KHドット秋葉原16";//  "JFドットjiskan16";
@@ -28,6 +30,9 @@ namespace AtsExCsTemplate.VehiclePlugin {
         MakeShinroImage shinro;
         MakeSpeedImg make_speed;
         DrawStopStations stop_stations;
+        Heisoku_Inf heisoku_inf;
+        DrawDoors d_door;
+        DrawUnits d_unit;
 
         private static string dllParentPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
@@ -36,19 +41,22 @@ namespace AtsExCsTemplate.VehiclePlugin {
             
             txH = TextureManager.Register("base.png", 2048, 1024);
             gdi = new GDIHelper(txH.Width, txH.Height);
-            mon_R = new Bitmap(Path.Combine(dllParentPath, "./tex/base.png"));
+            //mon_R = new Bitmap(Path.Combine(dllParentPath, "./tex/base.png"));
 
             bg_color = new BACKGROUND_COLOR(0);
             genzai_jikoku = new MakeGenzaiJikokuImg(395, 2, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
             kirotei = new MakeKiroteiImg(395, 2, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
             shinro = new MakeShinroImage();
             make_speed = new MakeSpeedImg(0, 16, DEFAULT_FONT_SIZE, Color.White, DEFAULT_FONT_FAMILY, bg_color.bg2);
-            stop_stations = new DrawStopStations();
+            stop_stations = new DrawStopStations(builder);
+            heisoku_inf = new Heisoku_Inf(builder);
+            d_door = new DrawDoors(builder);
+            d_unit = new DrawUnits(builder);
         }
 
         public override void Dispose () {
             BveHacker.ScenarioCreated -= OnScenarioCreated;
-            mon_R.Dispose();
+            //mon_R.Dispose();
             genzai_jikoku.Dispose();
             shinro.Dispose();
             make_speed.Dispose();
@@ -70,19 +78,15 @@ namespace AtsExCsTemplate.VehiclePlugin {
                 this.base_draw_f = false;
             }
 
+            // ---- DRAW系 ----
             // ドア
-            for (int i = 0; i < Native.VehicleSpec.Cars - 1; ++i) {
-                draw_door(i);
-                draw_car_unit(i);
-            }
-
+            this.d_door.draw(gdi);
+            // ユニット
+            this.d_unit.draw(gdi);
             // 停車駅一覧[1]-[5]を表示
-            StationList stations = BveHacker.Scenario.Route.Stations;
-            // ドア状態
-            int door = isAllDoorClosed() ? 0 : 1;
-            // 停車駅表示
-            stop_stations.draw(gdi, stations, stations.CurrentIndex + door);
+            this.stop_stations.draw(gdi);
 
+            // ---- BMP系 ----
             // 現在時刻
             genzai_jikoku.make(Native.VehicleState.Time);
             if (genzai_jikoku.isUpdate()) gdi.Graphics.DrawImage(genzai_jikoku.get(), 350, 2);
@@ -95,21 +99,18 @@ namespace AtsExCsTemplate.VehiclePlugin {
             kirotei.make(Native.VehicleState.Location);
             if (kirotei.isUpdate()) gdi.Graphics.DrawImage(kirotei.get(), 397, 68);
            
+            // 開通距離表示(先行列車までの距離(仮実装))
+            this.shinro.make(BveHacker.Scenario.SectionManager.PreTrainLocation - Native.VehicleState.Location);
+            if (this.shinro.isUpdate()) { 
+                gdi.Graphics.DrawImage(shinro.get(), 0, 205);
+            }
+
+            
             // 採時駅表示(着時刻および発時刻がある駅とする)
             draw_saiji_eki();
 
             // 終着駅表示
             draw_syucyaku_eki();
-
-            // 開通距離表示(停車駅までの距離(仮実装))
-            if (0 <= stations.CurrentIndex + door + 1 && stations.CurrentIndex + door + 1 < stations.Count) {
-                double d = ((Station)stations[stations.CurrentIndex + door + 1]).Location - Native.VehicleState.Location;
-                
-                this.shinro.make(d);
-                if (this.shinro.isUpdate()) { 
-                    gdi.Graphics.DrawImage(shinro.get(), 0, 205);
-                }
-            }
 
             txH.Update(gdi);
             //update = false;
@@ -247,6 +248,19 @@ namespace AtsExCsTemplate.VehiclePlugin {
 
             return true;
 
+        }
+
+        private List<BCST_HEISOKU> heisoku_inf_get() {
+            List<BCST_HEISOKU> ret = new List<BCST_HEISOKU> ();
+            // 現在閉塞から5閉塞分取得する
+            List<int> indexs = BveHacker.Scenario.SectionManager.StopSignalSectionIndexes;
+            MapFunctionList sections =  BveHacker.Scenario.SectionManager.Sections;
+            foreach(int i in indexs) {
+                BCST_HEISOKU inf;
+                inf.location = sections[i].Location;
+                
+            }
+            return ret;
         }
     }
 }
