@@ -1,60 +1,21 @@
-﻿using System;
+﻿using PITempCS.mon;
+using System;
 using System.Drawing;
-
-struct DWST_SHINRO_COLOR {
-	public Color bg;		// 背景色
-	public Color kido;		// 進路ベース
-	public Color kaitsu;	// 開通進路
-	public Color text;		// 文字色
-	public Color jisya;		// 自車マーク
-	public Color yajirushi;	// 矢印マーク
-	public DWST_SHINRO_COLOR (int i) {
-		this.bg = Color.Black;
-		this.kido = Color.White;
-		this.kaitsu = Color.Cyan;
-		this.text = Color.Yellow;
-		this.jisya = Color.White;
-		this.yajirushi = Color.Red;
-	}
-}
-
-struct DWST_SHINRO_INF {
-	public int width;		// 表示エリアの幅
-	public int height;		// 表示エリアの高さ
-	public int track_width;	// 軌道回路の幅
-	public int track_height;// 1000[m]の高さ
-	public int yajirushi_h; // 矢印の高さ
-	public int font_size;   // フォントサイズ
-	public String font_name;// フォント名
-	public Font font;		// フォント
-
-	public DWST_SHINRO_INF (int i) {
-		this.width = 200;
-		this.height = 225;
-		this.track_width = 20;
-		this.track_height = 180;
-		this.yajirushi_h = 20;
-		this.font_size = 16;
-		this.font_name = "VL ゴシック";
-		this.font = new Font(this.font_name, this.font_size);
-	}
-}
-
+using Zbx1425.DXDynamicTexture;
 struct SHINRO_INF {
-	public String name;		// 軌道回路名称
-	public int blockID;     // ブロックID
-	public double distance;	// 進路開通距離
-	public SHINRO_INF(int i) {
-		this.name     = "";
-		this.blockID  = 0;
-		this.distance = 0.0;
-	}
+    public String name;     // 軌道回路名称
+    public int blockID;     // ブロックID
+    public double distance; // 進路開通距離
+    public SHINRO_INF (int i) {
+        this.name = "";
+        this.blockID = 0;
+        this.distance = 0.0;
+    }
 }
-
-
 public class MakeShinroImage {
 	Bitmap shinaro;
 	Bitmap sankaku;
+	Bitmap jisya;
 	Graphics g;
     int distance;
 	DWST_SHINRO_COLOR color;
@@ -69,7 +30,8 @@ public class MakeShinroImage {
 		this.d_inf = new DWST_SHINRO_INF(0);
 		this.shinaro = new Bitmap(this.d_inf.width, this.d_inf.height);
 		this.sankaku = new Bitmap(this.d_inf.track_width * 2, this.d_inf.track_height / 10);
-		this.g = Graphics.FromImage(this.shinaro);
+        this.jisya = new Bitmap(this.d_inf.track_width * 2, this.d_inf.track_height / 10);
+        this.g = Graphics.FromImage(this.shinaro);
 		this.distance = 0;
         var sankaku_pp = new System.Drawing.Drawing2D.GraphicsPath();
 		sankaku_pp.AddPolygon(new Point[] { 
@@ -80,7 +42,19 @@ public class MakeShinroImage {
 		sankaku_g.FillRectangle(new SolidBrush(color.bg), 0, 0, this.sankaku.Width, this.sankaku.Height);
 		sankaku_g.FillPath(new SolidBrush(color.yajirushi), sankaku_pp);
 		sankaku_g.Dispose();
-		this.init();
+
+        var jisya_pp = new System.Drawing.Drawing2D.GraphicsPath();
+        jisya_pp.AddPolygon(new Point[] {
+				new Point(                    0, d_inf.track_height / 10    ),
+				new Point(d_inf.track_width * 2, d_inf.track_height / 10    ),
+				new Point(d_inf.track_width * 2, d_inf.track_height / 10 / 2),
+				new Point(d_inf.track_width    ,                           0),
+				new Point(                    0, d_inf.track_height / 10 / 2)});
+        Graphics jisya_g = Graphics.FromImage(this.jisya);
+        jisya_g.FillRectangle(new SolidBrush(color.bg), 0, 0, this.jisya.Width, this.jisya.Height);
+        jisya_g.FillPath(new SolidBrush(color.jisya), jisya_pp);
+        jisya_g.Dispose();
+        this.init();
 
     }
 
@@ -94,7 +68,7 @@ public class MakeShinroImage {
         // 距離程表示[   0]
         g.DrawString("0   ", this.d_inf.font, new SolidBrush(this.color.text), new Point(0, this.d_inf.track_height - this.d_inf.font_size));
 		// 自車マーク表示
-
+		g.DrawImage(this.jisya, 75 - this.d_inf.track_width / 2, this.d_inf.track_height);
 		// 更新フラグ
 		this.update = true;
     }
