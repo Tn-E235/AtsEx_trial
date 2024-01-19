@@ -181,22 +181,20 @@ namespace PITempCS.mon {
         }
     }
 
+    struct BCST_HEISOKU {
+        public int type;            // 閉塞種別[0:閉塞, 1:場内]
+        public double location;     // 閉塞開始距離[m]
+        public double distance;     // 閉塞長[m]
 
-    struct STOP_EKI_INF {
-        public int idx;
-        public string name;
-        public TimeSpan cyaku_jikoku;
-        public TimeSpan hatsu_jikoku;
-        public int cyakuhatsu_bansen;
-        public int hatsu_bansen;
-        public STOP_EKI_INF(int i) {
-            idx = 0;
-            name = "未設定";
-            cyaku_jikoku = new TimeSpan(0);
-            hatsu_jikoku = new TimeSpan(0);
-            cyakuhatsu_bansen = 0;
-            hatsu_bansen = 0;
+        public BCST_HEISOKU (int i) {
+            this.type = 0;
+            this.location = -1.0d;
+            this.distance = -0.1d;
         }
     }
+
+
+    
+
 
 }
