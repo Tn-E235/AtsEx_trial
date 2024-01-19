@@ -24,23 +24,29 @@ public struct STATION_INF {
 		location = -1;
 	}
 }
-public class DrawStopStations {
+
+[PluginType(PluginType.VehiclePlugin)]
+public class DrawStopStations : AssemblyPluginBase {
 	MakeStopStationImg[] imgs = new MakeStopStationImg[5];
-    public DrawStopStations (){
-		this.imgs[0] = new MakeStopStationImg(1);
+    public DrawStopStations (PluginBuilder builder) : base(builder) {
+        this.imgs[0] = new MakeStopStationImg(1);
         this.imgs[1] = new MakeStopStationImg(2);
         this.imgs[2] = new MakeStopStationImg(3);
         this.imgs[3] = new MakeStopStationImg(4);
         this.imgs[4] = new MakeStopStationImg(5);
     }
 
-	public void draw(GDIHelper i_gdi, StationList i_stations, int i_idx) {
+	public void draw(GDIHelper i_gdi) {
+        StationList stations = BveHacker.Scenario.Route.Stations;
 		int i = 0;
+		int idx = stations.CurrentIndex;
+		idx += BveHacker.Scenario.Vehicle.Doors.AreAllClosingOrClosed ? 0 : 1;
+
 		foreach (MakeStopStationImg s in this.imgs) {
-			if (i_stations.Count <= i_idx + i || i_idx + i < 0) {
+			if (stations.Count <= idx + i || idx + i < 0) {
                 s.make(inf_set(null, -1, i));
             } else {
-				s.make(inf_set((Station)i_stations[i_idx + i], i_idx, i));
+				s.make(inf_set((Station)stations[idx + i], idx, i));
 			}
 			if (this.imgs[i].isUpdate()) {
 				i_gdi.Graphics.DrawImage(s.get(), 1025 - i * 100, 205);
@@ -72,6 +78,13 @@ public class DrawStopStations {
 		inf.hatsu_jikoku = i_station.DepertureTime;
 		inf.location = (int)i_station.Location;
 		return inf;
+    }
+
+	public override void Dispose () {
+	}
+
+	public override TickResult Tick (TimeSpan elapsed) {
+        return new VehiclePluginTickResult();
     }
 }
 
